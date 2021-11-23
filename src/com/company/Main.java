@@ -3,10 +3,14 @@ package com.company;
 import com.company.Model.Product;
 
 import java.text.NumberFormat;
+import java.time.Duration;
+import java.time.LocalTime;
 import java.util.*;
 
 public class Main {
+//    Số tiền đút vào máy
     private static int Wallet_Money = 0;
+//    Số lượng sản phảm mua
     private static int quantity = 0;
     private static int budget = 50000;
     private static Product Coke = new Product("Coke", 10000);
@@ -15,9 +19,14 @@ public class Main {
     private static List<Product> products = new ArrayList<Product>();
     private static final int[]moneyList = {10000,20000,50000,100000,200000};
     private static final String digit = "\\d*";
+    //Danh sách 3 sẩn phẩm mua gần nhất
     private static Queue<Integer> queue = new LinkedList<Integer>();
     private static int winRate = 10;
+    static long interval = 86400;
+    static Timer timer;
     public static void main(String[] args) {
+        calculateTimeToNextDay();
+        countDown();
         Scanner scanner = new Scanner(System.in);
         products.add(Coke);
         products.add(Pepsi);
@@ -109,6 +118,7 @@ public class Main {
                 break;
         }
     }
+    //hàm tính tiền
     private static void calculateBill(Product product){
         Scanner scanner = new Scanner(System.in);
         int maxQuantity = Wallet_Money/product.getPrice();
@@ -132,6 +142,7 @@ public class Main {
         }
         Wallet_Money = 0;
     }
+    //hàm kiểm tra kí tự nhập từ bàn phím sao cho hợp lí
     private static int validInput(String input, int maxNumber){
         Scanner scanner = new Scanner(System.in);
         int option = 0;
@@ -155,14 +166,13 @@ public class Main {
         }while(!flag);
         return option;
     }
-    private static void event(){
-
-    }
+    //Hàm chuyển đơn vị tiền
     private static String format(int currency){
         Locale locale = new Locale("vi","VN");
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
         return numberFormat.format(currency);
     }
+    //Khi mua sản phẩm, hàm lưu lại 3 sản phẩm mua gần nhâst
     private static void swap(int value){
         int len = quantity > 3 ? 3:quantity;
         for(int i =0; i< len;i++){
@@ -170,6 +180,7 @@ public class Main {
             queue.add(value);
         }
     }
+    //Hàm kiểm tra có trúng thưởng hay không
     public static void checkWin(int value){
         Random r = new Random();
         int winRateThisTurn = r.nextInt(100);
@@ -179,12 +190,45 @@ public class Main {
                 flag = false;
             }
         }
-        System.out.println(winRateThisTurn);
-        if((budget>=products.get(value-1).getPrice()) && (winRateThisTurn > winRate) && (flag)){
+        if((budget>=products.get(value-1).getPrice()) && (winRateThisTurn < winRate) && (flag)){
             budget-= products.get(value-1).getPrice();
             System.out.println("Chúc mừng bạn đã trúng 1 "+ products.get(value-1).getName());
             System.out.println(budget);
             quantity++;
         }
+    }
+    //Hàm tính thời gian từ hiện tại tới 24h ngày hôm đó
+    private static void calculateTimeToNextDay() {
+        LocalTime time = LocalTime.now();
+        LocalTime specificTime = LocalTime.of(0, 00, 00,00);
+        Duration duration = Duration.between(specificTime,time);
+        interval = 86400 - duration.getSeconds();
+    }
+
+    private static void setInterval() {
+        --interval;
+        //Sang ngày tiếp theo
+        if (interval == 1) {
+            calculateTimeToNextDay();
+            if(budget>0){
+                winRate +=50;
+                winRate = winRate> 100 ? 100 : winRate;
+            }else {
+                winRate = 10;
+                budget = 50000;
+            }
+        }
+    }
+//    Hàm đếm ngược thời gian đơn vị giây
+    private static void countDown(){
+        int delay = 1000;
+        int period = 1000;
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+
+            public void run() {
+                setInterval();
+            }
+        }, delay, period);
     }
 }
