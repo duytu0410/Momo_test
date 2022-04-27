@@ -1,11 +1,10 @@
-Họ và tên: Nguyễn Duy Tú
-Chạy file main trong thư mục src/com/company
-Hoàn thành:
-	Tất cả chức năng đã yêu cầu
-Chưa hoàn thành:
-	Hệ thống lại file code
-	Tất cả code đang bị dồn vào 1 file
+Vending machine with 3 products: Coke, Soda, Pepsi.
+- Accepts notes of 10.000, 20.000, 50.000, 100.000, 200.000 VND
+- Allows user to select products Coke (10.000), Pepsi (10.000), Soda (20.000)
+- Allows user to receive a refund by canceling the request.
+- Releases the selected product and remaining change if any
+- If there are 3 consecutive purchases of the same product, the user will have a 10% chance to receive a product for free. 
+- The limited budget for the program is 50.000 a day. 
+- If the limit cannot be reached for a day, the win rate of the next day will be increased by 50%.
 
-
-Vì thời gian có hạn nên em chưa kịp cấu trúc lại hệ thống các file, 
-hiện tại toàn bộ code đang bị dồn vào file Main. Em xin lỗi vì sự bất tiện này.
+made by Nguyen Duy Tu
